@@ -19,9 +19,21 @@ el_data  <- read.table(text = grep("^[1,2]/2/2007", readLines(file1), value = TR
                        sep = ";", header = TRUE, stringsAsFactors=F, na.strings = "?")
 
 
-######### plot 1  histogramm ###################################
+## Converting dates
+st_datetime <- paste(el_data$Date, el_data$Time)
+el_data$Datetime <- strptime(st_datetime, "%d/%m/%Y %H:%M:%S")
+el_data$Datetime <- as.POSIXct(el_data$Datetime)
 
-with(el_data, hist(Global_active_power, xlab= "Global Active Power(kilowatts)",col = "red",  main="Global Active Power"))
 
-dev.copy(png, "./figure/plot1.png")
+######### plot3  ###################################
+
+with(el_data,{
+        plot(y=Sub_metering_1, x= Datetime, ylab = "Energy Submeeting", xlab = "", type = "l", col= "black")
+        lines(Sub_metering_2 ~ Datetime, col='red') 
+        lines(Sub_metering_3 ~ Datetime, col='blue')
+        legend("topright",col=c("black", "blue","red"),legend=c("Sub_metering_1","Sub_metering_2", "Sub_metering_3"), lty= 1, lwd= 2)
+})
+
+
+dev.copy(png, "./figure/plot3.png")
 dev.off()
